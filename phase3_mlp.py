@@ -50,7 +50,7 @@ print(f"  Accuracy : {acc_standard*100:.2f}%")
 print(f"  F1 Score : {f1_standard:.4f}")
 print("="*40)
 
-labels_map     = {0:'No Fire', 1:'Low Risk', 2:'Moderate', 3:'High Risk'}
+labels_map = {0: 'Very Low (No Fire)', 1: 'Low Risk', 2: 'Moderate Risk', 3: 'High Risk', 4: 'Very High Danger'}
 unique_classes = np.unique(np.concatenate([y_test, preds_standard]))
 target_names   = [labels_map[i] for i in unique_classes]
 
@@ -95,7 +95,7 @@ plt.plot(x_pos, y_test,          'bo', alpha=0.5, markersize=5, label='Actual')
 plt.plot(x_pos, preds_standard,  'rx', alpha=0.5, markersize=5, label='Predicted')
 plt.xlabel('Sample Index', fontsize=12)
 plt.ylabel('Risk Class', fontsize=12)
-plt.yticks([0, 1, 2, 3], ['No Fire', 'Low', 'Moderate', 'High'])
+plt.yticks([0, 1, 2, 3, 4], ['Very Low', 'Low', 'Mod', 'High', 'Very High'])
 plt.title('Standard MLP — Predicted vs Actual', fontsize=13)
 plt.legend()
 plt.grid(True, alpha=0.3)

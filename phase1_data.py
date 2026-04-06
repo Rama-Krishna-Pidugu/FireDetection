@@ -21,10 +21,20 @@ print("="*55)
 # LOAD DATA
 # ============================================================
 df = pd.read_csv('forestfires.csv')
-df = df.drop(columns=['month', 'day', 'X', 'Y'])
+
+# Encode month and day ordinally instead of dropping them
+month_map = {'jan':1, 'feb':2, 'mar':3, 'apr':4, 'may':5, 'jun':6, 'jul':7, 'aug':8, 'sep':9, 'oct':10, 'nov':11, 'dec':12}
+day_map   = {'mon':1, 'tue':2, 'wed':3, 'thu':4, 'fri':5, 'sat':6, 'sun':7}
+
+df['month_num'] = df['month'].str.lower().map(month_map)
+df['day_num']   = df['day'].str.lower().map(day_map)
+
+# We drop the old string columns, keep X and Y
+df = df.drop(columns=['month', 'day'])
 df['area_log'] = np.log1p(df['area'])
 
-features = ['FFMC', 'DMC', 'DC', 'ISI', 'temp', 'RH', 'wind', 'rain']
+# Keep original features first so indices for Phase 2 (4=temp, 5=RH, 6=wind) don't break
+features = ['FFMC', 'DMC', 'DC', 'ISI', 'temp', 'RH', 'wind', 'rain', 'X', 'Y', 'month_num', 'day_num']
 
 print(f"\nDataset shape     : {df.shape}")
 print(f"Features          : {features}")
@@ -36,15 +46,17 @@ print(df[features].describe().round(2))
 # CONVERT TARGET TO RISK CLASS - FIXED
 # ============================================================
 def area_to_risk(log_area):
-    if log_area == 0.0:  return 0   # No Fire
+    # 5-Class Classification to match 5 Membership Functions
+    if log_area == 0.0:  return 0   # Very Low / No Fire
     elif log_area < 1.0: return 1   # Low Risk
-    elif log_area < 3.0: return 2   # Moderate Risk
-    else:                return 3   # High Risk
+    elif log_area < 2.0: return 2   # Moderate Risk
+    elif log_area < 3.0: return 3   # High Risk
+    else:                return 4   # Very High Danger
 
 y_class = np.array([area_to_risk(v) for v in df['area_log'].values])
 X       = df[features].values
 
-labels_map = {0:'No Fire', 1:'Low Risk', 2:'Moderate', 3:'High Risk'}
+labels_map = {0: 'Very Low (No Fire)', 1: 'Low Risk', 2: 'Moderate Risk', 3: 'High Risk', 4: 'Very High Danger'}
 
 unique, counts = np.unique(y_class, return_counts=True)
 print(f"\nClass Distribution:")
@@ -104,7 +116,7 @@ print("Saved: class_distribution.png")
 # ============================================================
 # PLOT 2 - FEATURE HISTOGRAMS
 # ============================================================
-fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+fig, axes = plt.subplots(3, 4, figsize=(16, 12))
 axes = axes.flatten()
 for i, col in enumerate(features):
     axes[i].hist(df[col], bins=25, color='darkorange', edgecolor='black')

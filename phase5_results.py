@@ -72,7 +72,7 @@ print(f"{'Standard MLP':<25} {acc_standard*100:>9.2f}% {f1_standard:>10.4f}")
 print(f"{'PSO-MLP':<25} {acc_pso*100:>9.2f}% {f1_pso:>10.4f}")
 print("="*55)
 
-labels_map     = {0:'No Fire', 1:'Low Risk', 2:'Moderate', 3:'High Risk'}
+labels_map = {0: 'Very Low (No Fire)', 1: 'Low Risk', 2: 'Moderate Risk', 3: 'High Risk', 4: 'Very High Danger'}
 unique_classes = np.unique(np.concatenate([y_test, preds_pso]))
 target_names   = [labels_map[i] for i in unique_classes]
 

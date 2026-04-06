@@ -44,10 +44,11 @@ class PSO_MLP:
 
     def decode(self, position):
         # Decode particle position to MLP hyperparameters
-        n1 = int(32  + position[0] * 96)    # neurons layer1: 32-128
-        n2 = int(16  + position[1] * 48)    # neurons layer2: 16-64
-        lr = 0.001   + position[2] * 0.009  # learning rate: 0.001-0.01
-        al = 0.0001  + position[3] * 0.001  # alpha: 0.0001-0.001
+        # Restored Network Capacity for 5-class complexity
+        n1 = int(32  + position[0] * 128)    # neurons layer1: 32-160
+        n2 = int(16  + position[1] * 64)     # neurons layer2: 16-80
+        lr = 0.001   + position[2] * 0.009   # learning rate: 0.001-0.01
+        al = 0.0001  + position[3] * 0.005   # alpha: 0.0001-0.005
         return n1, n2, lr, al
 
     def evaluate(self, position):
@@ -122,7 +123,7 @@ class PSO_MLP:
 # ============================================================
 # RUN PSO
 # ============================================================
-pso = PSO_MLP(n_particles=10, n_iterations=15)
+pso = PSO_MLP(n_particles=20, n_iterations=25)
 best_pos = pso.optimize()
 
 # Decode and save best position
