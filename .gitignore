@@ -30,6 +30,10 @@ models/*.joblib
 .mcp.json
 .opencode.json
 AGENTS.md
+CLAUDE.md 
+GEMINI.md
+
+wildfire.py
 
 # OS files
 .DS_Store
